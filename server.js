@@ -88,13 +88,15 @@ app.post('/api/login', async (req, res) => {
 // --- Các API cần xác thực (yêu cầu token) ---
 
 // 3. Lấy danh sách sinh viên của người dùng hiện tại
-app.get('/api/students', authenticateToken, (req, res) => {
-    const db = readDb();
-    const user = db.users[req.user.username];
-    if (!user) {
-        return res.status(404).json({ message: 'Người dùng không tìm thấy' });
+app.get('/api/users/students', authenticateToken, (req, res) => {
+    const userId = req.user.id; // Lấy ID người dùng từ token
+    const user = readUsersFromFile()[userId];
+    if (user) {
+        // Đảm bảo user.students là một mảng, nếu không thì trả về mảng rỗng
+        res.json(user.students || []);
+    } else {
+        res.status(404).json({ message: 'User not found' });
     }
-    res.json(user.students);
 });
 
 // 4. Thêm sinh viên mới
