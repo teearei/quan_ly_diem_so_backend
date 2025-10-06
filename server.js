@@ -5,6 +5,21 @@ const bcrypt = require('bcryptjs'); // Để hash mật khẩu
 const jwt = require('jsonwebtoken'); // Để tạo token xác thực
 const fs = require('fs'); // Để đọc/ghi file JSON làm database
 
+// --- Hàm tiện ích đọc/ghi dữ liệu (đặt ở đây) ---
+function readUsersFromFile() {
+    if (!fs.existsSync(DATA_FILE)) {
+        // Tạo file nếu nó không tồn tại
+        fs.writeFileSync(DATA_FILE, JSON.stringify({}));
+        return {};
+    }
+    const data = fs.readFileSync(DATA_FILE, 'utf8');
+    return JSON.parse(data);
+}
+
+function writeUsersToFile(users) {
+    fs.writeFileSync(DATA_FILE, JSON.stringify(users, null, 2), 'utf8');
+}
+
 const app = express();
 const PORT = 3000; // Cổng cho backend server
 
